@@ -22,8 +22,8 @@ def draw(file):
     startP=f.readline().split()
     goalP=f.readline().split()
     size=f.readline().split()
-    col = int(size[0])
-    row = int(size[1])
+    row = int(size[0])
+    col = int(size[1])
 
     kameP = turtle.Turtle()
     turtle.tracer(0, 0)  # to skip animation
@@ -49,10 +49,10 @@ def draw(file):
 
     # stamps an arrow in start point, a turtle in goal
     kameP.penup()
-    kameP.color("red")
+    kameP.color("green")
     kameP.setposition(int(startP[0])*unit, int(startP[1])*unit)
     kameP.stamp()
-    kameP.shape("turtle")
+    kameP.color("red")
     kameP.setposition(int(goalP[0])*unit, int(goalP[1])*unit)
     kameP.stamp()
 

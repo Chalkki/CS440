@@ -4,7 +4,61 @@
 from tkinter import UNITS
 import turtle
 import unittest
+class Cell:
+    def __init__(self, isblocked = False):
+        self.isblocked = isblocked
+        self.upperleft = []
+        self.upperright = []
+        self.lowerleft = []
+        self.lowerright = []
+grid = []
+def vertexBelongsToCell(x1,y1,x2,y2):
+    start_cell = []
+    end_cell = []
+    for cell in grid:
+        if [x1, y1] == cell.upperleft:
+            start_cell.append(cell)
+            continue
+        elif [x2, y2] == cell.upperleft:
+            end_cell.append(cell)
+            continue
+        if [x1, y1] == cell.upperright:
+            start_cell.append(cell)
+            continue
+        elif [x2, y2] == cell.upperright:
+            end_cell.append(cell)
+            continue
+        if [x1, y1] == cell.lowerleft:
+            start_cell.append(cell)
+            continue
+        elif [x2, y2] == cell.lowerleft:
+            end_cell.append(cell)
+            continue
+        if [x1, y1] == cell.lowerright:
+            start_cell.append(cell)
+            continue
+        elif [x2, y2] == cell.lowerright:
+            end_cell.append(cell)
+            continue
+    path_cells = [cell for cell in start_cell if cell in end_cell]
+    return path_cells
 
+def path_blocked(path_cells):
+    blocked = False
+    for cell in path_cells:
+        blocked = blocked | cell.isblocked
+    return blocked
+
+def initialize_cell(x, y, isblocked):
+    # initialize the cell and put it into the grid list
+    cell = Cell(isblocked)
+
+    cell.upperleft = [x, y]
+    cell.upperright = [x+1, y]
+    cell.lowerleft = [x, y-1]
+    cell.lowerright = [x+1, y-1]
+    print(x,y)
+    grid.append(cell)
 def draw(file):
 
     unit = 10  #change to change size
@@ -44,9 +98,11 @@ def draw(file):
     kameP.setposition(unit,unit)
     kameP.pendown()
 
-    for i in range(col):
-        for i in range(row):
+    for x in range(col):
+        for y in range(row):
             isblocked = True if f.readline().split()[2]=='1' else False
+            # initialize the cell
+            initialize_cell(x, y, isblocked)
             square(isblocked)
             kameP.forward(unit)
         kameP.penup()
@@ -69,12 +125,12 @@ def draw(file):
     turtle.update()
     f.close()
 
-    turtle.onscreenclick(get_mouse_click_coor)
-    turtle.mainloop()
+    # turtle.onscreenclick(get_mouse_click_coor)
+    # turtle.mainloop()
 
 
 
 
 
-fileN = input("File name? ")
-draw('Assignment 1/'+fileN)
+# fileN = input("File name? ")
+# draw('Assignment 1/'+fileN)

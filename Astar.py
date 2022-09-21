@@ -1,13 +1,16 @@
 from math import sqrt
 import heapq
+import draw_grid as dg
+import math
+grid = dg.grid
 
 
 class Node:
     def __init__(self, parent=None, x=None, y=None):
         self.parent = parent
-        self.g = float('inf')
+        self.g = math.inf
         self.h = 0
-        self.f = 0
+        self.f = self.g + self.h
         self.x = x
         self.y = y
 
@@ -15,14 +18,9 @@ class Node:
         return self.x == other.x and self.y == other.y
 
 
-def astar(grid, start, end):
+def astar(start, goal):
     """Returns a list of tuples as a path from the given start to the given end in the given grid"""
 
-    # Create start and end node
-    start = Node(start)
-    start.g = start.h = start.f = 0
-    goal = Node(end)
-    goal.g = goal.h = goal.f = 0
 
     # Initialize both open and closed list
     fringe = []
@@ -30,13 +28,16 @@ def astar(grid, start, end):
     closed = {}
     # Add the start node
     heapq.heappush(fringe, (start.g + start.h, start))
-    fringe_search[start] = 1
+    fringe_search[start.x*start.y+start.y] = 1
     # Loop until you find the end
     while len(fringe) > 0:
 
         # Get the current node
-        current = heapq.heappop(fringe)
-        del fringe_search[current]
+        heap_item = heapq.heappop(fringe)
+        print(heap_item[0])
+        print(heap_item[1])
+        current = heap_item[1]
+        del fringe_search[current.x*current.y+current.y]
 
         if current == goal:
             path = []
@@ -45,20 +46,11 @@ def astar(grid, start, end):
                 current = current.parent
             return path[::-1]  # Return reversed path
 
-        if current not in closed.keys():
-            closed[current] = 1
+        if current.x*current.y+current.y not in closed.keys():
+            closed[current.x*current.y+current.y] = 1
 
-        # # Found the goal
-        # if current == goal:
-        #     path = []
-        #     current = current
-        #     while current is not None:
-        #         path.append(current.position)
-        #         current = current.parent
-        #     return path[::-1] # Return reversed path
 
         # Generate children
-        neighbors = []
         for new_position in [[0, -1], [0, 1], [-1, 0], [1, 0],
                              [-1, -1], [-1, 1], [1, -1], [1, 1]]:  # Adjacent squares
 
@@ -68,50 +60,39 @@ def astar(grid, start, end):
 
             # Create new node
             new_node = Node(None, node_position[0], node_position[1])
-            if not closed(new_node):
-                if not fringe
-            # Append
-        #     neighbors.append(new_node)
-        #
-        # # Loop through children
-        # for child in neighbors:
-        #
-        #     # Child is on the closed list
-        #     for closed_child in closed:
-        #         if child == closed_child:
-        #             continue
+            # see if the new path is valid
+            is_path_blocked(current, new_node)
+            if new_node.x*new_node.y+new_node.y not in closed.keys():
+                if new_node.x*new_node.y+new_node.y not in fringe_search.keys():
+                    new_node.g = math.inf
+                    new_node.parent = None
+                fringe, fringe_search = UpdateVertex(fringe, fringe_search, current, new_node, goal)
 
-            # Create the f, g, and h values
-            # child.g = current.g + 1
-            # child.h = sqrt(2) * (
-            #     min((child.position[0] - goal.position[0]), (child.position[1] - goal.position[1]))) + max(
-            #     ((child.position[0] - goal.position[0]), (child.position[1] - goal.position[1]))) - min(
-            #     (child.position[0] - goal.position[0]), (child.position[1] - goal.position[1]))
-            # child.f = child.g + child.h
+    return []
 
 
-            UpdateVertex(current, child, goal)
-            # Child is already in the open list
-            for open_node in fringe:
-                if child == open_node and child.g > open_node.g:
-                    continue
-
-            # Add the child to the open list
-            fringe.append(child)
-
-def UpdateVertex(fringe,s, s_prime, goal):
+def UpdateVertex(fringe, fringe_search, s, s_prime, goal):
     # Create the f, g, and h values
-    if s.g + c(s,s_prime) < s_prime.g:
+    if s.g + c(s, s_prime) < s_prime.g:
         s_prime.g = s.g + c(s,s_prime)
         # here is the heuristic function for the child
-        s_prime.h = sqrt(2) * (
-            min((s_prime.position[0] - goal.position[0]), (s_prime.position[1] - goal.position[1]))) + max(
-            ((s_prime.position[0] - s_prime.position[0]), (s_prime.position[1] - goal.position[1]))) - min(
-            (s_prime.position[0] - goal.position[0]), (s_prime.position[1] - goal.position[1]))
+        s_prime.h = heuristic(s_prime, goal)
         s_prime.parent = s
         s_prime.f = s_prime.g + s_prime.h
-        heapq.heapreplace(fringe,s_prime.f)
-        return fringe
+        if s_prime.x*s_prime.y+s_prime.y in fringe_search.keys():
+            heapq.heapreplace(fringe, s_prime.f)
+        else:
+            heapq.heappush(fringe, s_prime.f)
+            fringe_search[s_prime.x*s_prime.y+s_prime.y] = 1
+        return fringe, fringe_search
+
+
+def heuristic(s, goal):
+    return sqrt(2) * (
+        min(abs(s.x - goal.x), abs(s.y - goal.y))) + max(
+        (abs(s.x - goal.x), abs(s.y - goal.y))) - min(
+        abs(s.x - goal.x), abs(s.y - goal.y))
+
 
 def c(s, s_prime):
     if not is_path_blocked(s, s_prime):
@@ -123,6 +104,32 @@ def c(s, s_prime):
     return float('inf')
 
 
-def is_path_blocked(s, s_prime):
-    return False
-    return "No path found"
+def is_path_blocked(start_node, end_node):
+    path_cells = dg.vertexBelongsToCell(start_node.x, start_node.y,
+                                        end_node.x, end_node.y)
+    return dg.path_blocked(path_cells)
+
+
+def astar_main():
+    fileN = input("File name? ")
+    dg.draw('Assignment 1/' + fileN)
+    with open('Assignment 1/' + fileN, 'r') as f:
+        start_p = f.readline().split()
+        goal_p = f.readline().split()
+
+    print(start_p)
+    print(goal_p)
+    # Create start and goal node
+    start = Node(None, int(start_p[0]), int(start_p[1]))
+    goal = Node(None, int(goal_p[0]), int(goal_p[1]))
+
+    start.g = 0
+    start.h = heuristic(start, goal)
+    start.f = start.g + start.h
+
+    goal.h = 0
+    goal.f = goal.g + goal.h
+    astar(start, goal)
+    #print(astar(start, goal))
+
+astar_main()

@@ -15,13 +15,16 @@ class Node:
         self.y = y
 
     def __eq__(self, other):
+        # equal? function
         return self.x == other.x and self.y == other.y
+
+    def __lt__(self, other):
+        # less than function, put a standard to check which one is less
+        return self.f < other.f
 
 
 def astar(start, goal):
     """Returns a list of tuples as a path from the given start to the given end in the given grid"""
-
-
     # Initialize both open and closed list
     fringe = []
     fringe_search = {}
@@ -34,11 +37,9 @@ def astar(start, goal):
 
         # Get the current node
         heap_item = heapq.heappop(fringe)
-        print(heap_item[0])
-        print(heap_item[1])
         current = heap_item[1]
-        del fringe_search[current.x*current.y+current.y]
-
+        x = fringe_search.pop(current.x*current.y+current.y, "not found in fringe")
+        # print(x)
         if current == goal:
             path = []
             while current is not None:
@@ -80,9 +81,9 @@ def UpdateVertex(fringe, fringe_search, s, s_prime, goal):
         s_prime.parent = s
         s_prime.f = s_prime.g + s_prime.h
         if s_prime.x*s_prime.y+s_prime.y in fringe_search.keys():
-            heapq.heapreplace(fringe, s_prime.f)
+            heapq.heapreplace(fringe, (s_prime.f, s_prime))
         else:
-            heapq.heappush(fringe, s_prime.f)
+            heapq.heappush(fringe, (s_prime.f, s_prime))
             fringe_search[s_prime.x*s_prime.y+s_prime.y] = 1
         return fringe, fringe_search
 
@@ -116,9 +117,6 @@ def astar_main():
     with open('Assignment 1/' + fileN, 'r') as f:
         start_p = f.readline().split()
         goal_p = f.readline().split()
-
-    print(start_p)
-    print(goal_p)
     # Create start and goal node
     start = Node(None, int(start_p[0]), int(start_p[1]))
     goal = Node(None, int(goal_p[0]), int(goal_p[1]))
@@ -129,7 +127,6 @@ def astar_main():
 
     goal.h = 0
     goal.f = goal.g + goal.h
-    astar(start, goal)
-    #print(astar(start, goal))
+    print(astar(start, goal))
 
 astar_main()

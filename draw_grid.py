@@ -5,14 +5,18 @@ from tkinter import UNITS
 import turtle
 import unittest
 class Cell:
-    def __init__(self, isblocked = False):
+    def __init__(self, isblocked=False):
         self.isblocked = isblocked
         self.upperleft = []
         self.upperright = []
         self.lowerleft = []
         self.lowerright = []
+
+
 grid = []
-def vertexBelongsToCell(x1,y1,x2,y2):
+
+
+def vertexBelongsToCell(x1, y1, x2, y2):
     start_cell = []
     end_cell = []
     for cell in grid:
@@ -125,12 +129,13 @@ def draw(file):
     turtle.update()
     f.close()
 
-    # turtle.onscreenclick(get_mouse_click_coor)
-    # turtle.mainloop()
+    turtle.onscreenclick(get_mouse_click_coor)
+    #turtle.mainloop()
+    turtle.done()
 
 
 
 
-
+#
 # fileN = input("File name? ")
 # draw('Assignment 1/'+fileN)

@@ -1,11 +1,12 @@
 # please use python3
 # see instructions here (https://resources.cs.rutgers.edu/docs/using-python-on-cs-linux-machines/)
 
+from pickle import NONE
 from tkinter import UNITS
 import turtle
 import unittest
 
-def draw(file):
+def draw(file, path=None):
 
     unit = 10  #change to change size
     kameP = turtle.Turtle()  #turtle to draw
@@ -30,6 +31,22 @@ def draw(file):
             kameP.end_fill()
             kameP.color("black")
 
+    def walk(path=None):  #walk through the given path, suppose 2D arr for now
+        if path==None:
+            return
+        turtle.tracer()
+        kameP.color("red")  #red arrow for goal
+        kameP.setposition(int(goalP[0])*unit, int(goalP[1])*unit)
+        kameP.stamp()
+        kameP.penup()
+        kameP.color("green")  #green arrow for start
+        kameP.setposition(int(startP[0])*unit, int(startP[1])*unit)
+        kameP.stamp()
+        kameP.pendown()
+        for i in path:
+            kameP.setposition(i[0]*unit, i[2]*unit)
+
+    #reads file
     f = open(file, 'r')
     startP=f.readline().split()
     goalP=f.readline().split()
@@ -37,13 +54,15 @@ def draw(file):
     row = int(size[0])
     col = int(size[1])
 
+    #set up
     screen.setup(row*unit,col*unit)
     screen.setworldcoordinates(unit, ((col+1)*unit), (row+1)*unit, unit)  #enable our coordinate system
-    turtle.tracer(0, 0)  # to skip animation
+    turtle.tracer(0,0)  # to skip animation
     kameP.penup()
     kameP.setposition(unit,unit)
     kameP.pendown()
 
+    #draw grid and path
     for i in range(col):
         for i in range(row):
             isblocked = True if f.readline().split()[2]=='1' else False
@@ -56,25 +75,18 @@ def draw(file):
         kameP.forward(-unit)
         kameP.left(90)
         kameP.pendown()
-
-    # stamps an arrow in start point, a turtle in goal
-    kameP.penup()
-    kameP.color("green")
-    kameP.setposition(int(startP[0])*unit, int(startP[1])*unit)
-    kameP.stamp()
-    kameP.color("red")
-    kameP.setposition(int(goalP[0])*unit, int(goalP[1])*unit)
-    kameP.stamp()
-
+    walk()
     turtle.update()
     f.close()
 
+    #loop
     turtle.onscreenclick(get_mouse_click_coor)
     turtle.mainloop()
 
 
+def main():
+    fileN = input("File name? ")
+    draw('Assignment 1/'+fileN)
 
-
-
-fileN = input("File name? ")
-draw('Assignment 1/'+fileN)
+if __name__ == "__main__":
+    main()

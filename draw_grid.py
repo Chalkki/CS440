@@ -1,11 +1,23 @@
 # please use python3
 # see instructions here (https://resources.cs.rutgers.edu/docs/using-python-on-cs-linux-machines/)
 
+from tkinter import UNITS
 import turtle
+import unittest
 
 def draw(file):
 
-    unit = 10
+    unit = 10  #change to change size
+    kameP = turtle.Turtle()  #turtle to draw
+    screen = turtle.Screen()
+
+    def get_mouse_click_coor(x, y):
+        if unit>x or x>(row+1)*unit or unit>y or y>(col+1)*unit:
+            return
+        else:
+            x//=unit
+            y//=unit
+        screen.title("Grid({X},{Y})".format(X="{:.0f}".format(x), Y="{:.0f}".format(y)))
 
     def square(isblock):
         if isblock:
@@ -25,11 +37,9 @@ def draw(file):
     row = int(size[0])
     col = int(size[1])
 
-    kameP = turtle.Turtle()
-    turtle.tracer(0, 0)  # to skip animation
-    screen = turtle.Screen()
     screen.setup(row*unit,col*unit)
-    screen.setworldcoordinates(unit, ((col+1)*unit), (row+1)*unit, unit)
+    screen.setworldcoordinates(unit, ((col+1)*unit), (row+1)*unit, unit)  #enable our coordinate system
+    turtle.tracer(0, 0)  # to skip animation
     kameP.penup()
     kameP.setposition(unit,unit)
     kameP.pendown()
@@ -57,8 +67,14 @@ def draw(file):
     kameP.stamp()
 
     turtle.update()
-    turtle.done()
     f.close()
 
+    turtle.onscreenclick(get_mouse_click_coor)
+    turtle.mainloop()
+
+
+
+
+
 fileN = input("File name? ")
-draw(fileN)
+draw('Assignment 1/'+fileN)

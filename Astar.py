@@ -39,7 +39,7 @@ def astar(start, goal):
         heap_item = heapq.heappop(fringe)
         current = heap_item[1]
         x = fringe_search.pop(current.x*current.y+current.y, "not found in fringe")
-        # print(x)
+        print(x)
         if current == goal:
             path = []
             while current is not None:
@@ -62,7 +62,8 @@ def astar(start, goal):
             # Create new node
             new_node = Node(None, node_position[0], node_position[1])
             # see if the new path is valid
-            is_path_blocked(current, new_node)
+            if is_path_blocked(current, new_node):
+                continue
             if new_node.x*new_node.y+new_node.y not in closed.keys():
                 if new_node.x*new_node.y+new_node.y not in fringe_search.keys():
                     new_node.g = math.inf
@@ -84,7 +85,7 @@ def UpdateVertex(fringe, fringe_search, s, s_prime, goal):
             heapq.heapreplace(fringe, (s_prime.f, s_prime))
         else:
             heapq.heappush(fringe, (s_prime.f, s_prime))
-            fringe_search[s_prime.x*s_prime.y+s_prime.y] = 1
+        fringe_search[s_prime.x*s_prime.y+s_prime.y] = 1
         return fringe, fringe_search
 
 

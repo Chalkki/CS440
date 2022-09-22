@@ -47,10 +47,10 @@ def vertexBelongsToCell(x1, y1, x2, y2):
     path_cells = [cell for cell in start_cell if cell in end_cell]
     return path_cells
 
-def path_blocked(path_cells):
-    blocked = False
+def path_blocked_astar(path_cells):
+    blocked = True
     for cell in path_cells:
-        blocked = blocked | cell.isblocked
+        blocked = blocked & cell.isblocked
     return blocked
 
 def initialize_cell(x, y, isblocked):

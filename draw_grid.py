@@ -4,73 +4,16 @@
 from tkinter import UNITS
 import turtle
 import unittest
-class Cell:
-    def __init__(self, isblocked=False):
-        self.isblocked = isblocked
-        self.upperleft = []
-        self.upperright = []
-        self.lowerleft = []
-        self.lowerright = []
 
 
-grid = []
-
-
-def vertexBelongsToCell(x1, y1, x2, y2):
-    start_cell = []
-    end_cell = []
-    for cell in grid:
-        if [x1, y1] == cell.upperleft:
-            start_cell.append(cell)
-            continue
-        elif [x2, y2] == cell.upperleft:
-            end_cell.append(cell)
-            continue
-        if [x1, y1] == cell.upperright:
-            start_cell.append(cell)
-            continue
-        elif [x2, y2] == cell.upperright:
-            end_cell.append(cell)
-            continue
-        if [x1, y1] == cell.lowerleft:
-            start_cell.append(cell)
-            continue
-        elif [x2, y2] == cell.lowerleft:
-            end_cell.append(cell)
-            continue
-        if [x1, y1] == cell.lowerright:
-            start_cell.append(cell)
-            continue
-        elif [x2, y2] == cell.lowerright:
-            end_cell.append(cell)
-            continue
-    path_cells = [cell for cell in start_cell if cell in end_cell]
-    return path_cells
-
-def path_blocked_astar(path_cells):
-    blocked = True
-    for cell in path_cells:
-        blocked = blocked & cell.isblocked
-    return blocked
-
-def initialize_cell(x, y, isblocked):
-    # initialize the cell and put it into the grid list
-    cell = Cell(isblocked)
-
-    cell.upperleft = [x, y]
-    cell.upperright = [x+1, y]
-    cell.lowerleft = [x, y-1]
-    cell.lowerright = [x+1, y-1]
-    print(x,y)
-    grid.append(cell)
-def draw(file):
+def draw(grid, node_dict, startP, goalP, row, col, path):
 
     unit = 10  #change to change size
     kameP = turtle.Turtle()  #turtle to draw
     screen = turtle.Screen()
 
     def get_mouse_click_coor(x, y):
-        if unit>x or x>(row+1)*unit or unit>y or y>(col+1)*unit:
+        if unit>x or x>(col+1)*unit or unit>y or y>(row+1)*unit:
             return
         else:
             x//=unit
@@ -83,30 +26,31 @@ def draw(file):
             kameP.begin_fill()
         for i in range(4):
             kameP.forward(unit)
-            kameP.left(90)
+            kameP.right(90)
         if isblock:
             kameP.end_fill()
             kameP.color("black")
 
-    f = open(file, 'r')
-    startP=f.readline().split()
-    goalP=f.readline().split()
-    size=f.readline().split()
-    row = int(size[0])
-    col = int(size[1])
+    def walk():
+        if path==None: return
+        for i in path:
+            kameP.setposition(i[0]*unit, i[1]*unit)
 
-    screen.setup(row*unit,col*unit)
-    screen.setworldcoordinates(unit, ((col+1)*unit), (row+1)*unit, unit)  #enable our coordinate system
+    #set up
+    screen.setup(col*unit,row*unit)
+    screen.setworldcoordinates(unit, ((row+1)*unit), (col+1)*unit, unit)  #enable our coordinate system
     turtle.tracer(0, 0)  # to skip animation
     kameP.penup()
     kameP.setposition(unit,unit)
     kameP.pendown()
+    kameP.left(90)
 
-    for x in range(col):
-        for y in range(row):
-            isblocked = True if f.readline().split()[2]=='1' else False
-            # initialize the cell
-            initialize_cell(x, y, isblocked)
+    for i in range(col):
+        for j in range(row):
+            x = i + 1
+            y = j + 1
+            isblocked = grid[str(x)+"/"+str(y)].isblocked
+            print(isblocked)
             square(isblocked)
             kameP.forward(unit)
         kameP.penup()
@@ -120,22 +64,18 @@ def draw(file):
     # stamps an arrow in start point, a turtle in goal
     kameP.penup()
     kameP.color("green")
-    kameP.setposition(int(startP[0])*unit, int(startP[1])*unit)
+    kameP.setposition(startP[0]*unit, startP[1]*unit)
     kameP.stamp()
     kameP.color("red")
-    kameP.setposition(int(goalP[0])*unit, int(goalP[1])*unit)
+    kameP.setposition(goalP[0]*unit, goalP[1]*unit)
     kameP.stamp()
 
+    kameP.pendown()
+    walk()
+    kameP.hideturtle()
+
     turtle.update()
-    f.close()
 
     turtle.onscreenclick(get_mouse_click_coor)
-    #turtle.mainloop()
-    turtle.done()
+    turtle.mainloop()
 
-
-
-
-#
-# fileN = input("File name? ")
-# draw('Assignment 1/'+fileN)

@@ -1,6 +1,7 @@
 import math
 import Astar
 from draw_grid import draw
+
 class Cell:
     def __init__(self, isblocked=False):
         self.isblocked = isblocked
@@ -36,36 +37,6 @@ def initialize_cell(x, y, isblocked,grid, row, node_dict):
     cell.lowerright = node_dict.get(str(x+1)+"/"+str(y+1))
     grid[str(x)+"/"+str(y)] = cell
     return grid
-
-
-# def vertex_touch_cell(x,y,grid):
-#     # check if the start and goal is not around boundary
-#     # the cell coordinate is designated by its upperleft vertex
-#     cell_1 = None
-#     cell_2 = None
-#     cell_3 = None
-#     cell_4 = None
-#     # check if there is upperleft cell
-#     if (x-1) * (y-1) + (y-1) > 0:
-#         cell_1 = grid[(x-1) * (y+1) + (y+1)]
-#     # check if there is upperright cell
-#     if x * (y+1) + (y+1) < len(grid):
-#         cell_2 = grid[(x+1) * (y+1) + (y+1)]
-#     # check if there is  left cell
-#     # if the point is at the leftmost corner, it doesn't have a left cell
-#     # if the point is at the lowermost corner, it also doesn't have a left cell
-#     if (x-1) * y + y > 0 | (x-1) * y + y <len(grid) :
-#         cell_3 = grid[ (x-1) * y + y]
-#     # check if there is a right cell
-#     if x * y + y < len(grid):
-#         cell_4 = grid[x * y + y]
-#     cells = []
-#     # if cell is None, then it means the specific cell is not existed
-#     for cell in [cell_1, cell_2, cell_3, cell_4]:
-#         if cell is not None:
-#             cells.append(cell)
-#     return cells
-
 
 def read_input(file,grid,node_dict):
     with open(file, 'r') as f:

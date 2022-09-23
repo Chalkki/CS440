@@ -33,6 +33,7 @@ def draw(fileN, path):
 
     #walk through a list of coornidates
     def walk():
+        kameP.color("red")
         if path==None: return
         for i in path:
             kameP.setposition(i[0]*unit,i[1]*unit)
@@ -69,13 +70,13 @@ def draw(fileN, path):
         kameP.pendown()
     f.close()
 
-    # stamps an arrow in start point, a turtle in goal
+    # stamps an green arrow at start point, a red arrow at goal
     kameP.penup()
-    kameP.color("green")
-    kameP.setposition(int(startP[0])*unit, int(startP[1])*unit)
-    kameP.stamp()
     kameP.color("red")
     kameP.setposition(int(goalP[0])*unit, int(goalP[1])*unit)
+    kameP.stamp()
+    kameP.color("green")
+    kameP.setposition(int(startP[0])*unit, int(startP[1])*unit)
     kameP.stamp()
 
     kameP.pendown()

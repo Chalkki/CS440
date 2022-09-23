@@ -2,22 +2,41 @@ from math import sqrt
 import heapq
 import math
 
+class Fringe:
+    def __init__(self):
+        self.heap=[]
+        self.dict={}
+
+    def isEmpty(self):
+        return len(self.heap)==0
+
+    def insert(self,f, node):
+        heapq.heappush(self.heap, (f, node))
+        self.dict[str(node.x)+"/"+str(node.y)] = 1
+
+    def exist(self, key):
+        return key in self.dict.keys()
+
+    def pop(self):
+        tmp = heapq.heappop(self.heap)[1]
+        self.dict.pop(str(tmp.x)+"/"+str(tmp.y), "not found in fringe")
+        return tmp
+
+    def remove(self, f, node):
+        heapq.heapreplace(self.heap, (f, node))
+
+closed = {}
+fringe=Fringe()
 def astar(start, goal, node_dict):
     """Returns a list of lists as a path from the given start to the given end in the given grid"""
-    # Initialize both open and closed list
-    fringe = []
-    fringe_search = {}
-    closed = {}
+
     # Add the start node
-    heapq.heappush(fringe, (start.g + start.h, start))
-    fringe_search[str(start.x)+"/"+str(start.y)] = 1
+    fringe.insert(start.g+start.h, start)
     # Loop until you find the end
-    while len(fringe) > 0:
+    while not fringe.isEmpty():
 
         # Get the current node
-        heap_item = heapq.heappop(fringe)
-        current = heap_item[1]
-        fringe_search.pop(str(current.x)+"/"+str(current.y), "not found in fringe")
+        current = fringe.pop()
         #print(x)
         if current == goal:
             path = []
@@ -32,14 +51,14 @@ def astar(start, goal, node_dict):
         for neighbor_pos in current.neighbor:  # Adjacent vertex
             neighbor = node_dict[str(neighbor_pos[0])+"/"+str(neighbor_pos[1])]
             if str(neighbor.x)+"/"+str(neighbor.y) not in closed.keys():
-                if str(neighbor.x)+"/"+str(neighbor.y) not in fringe_search.keys():
+                if not fringe.exist(str(neighbor.x)+"/"+str(neighbor.y)):
                     neighbor.g = math.inf
                     neighbor.parent = None
-                fringe, fringe_search = UpdateVertex(fringe, fringe_search, current, neighbor, goal)
+                UpdateVertex(current, neighbor, goal)
     return node_dict, []
 
 
-def UpdateVertex(fringe, fringe_search, s, s_prime, goal):
+def UpdateVertex(s, s_prime, goal):
     # Create the f, g, and h values
     if s.g + c(s, s_prime) < s_prime.g:
         s_prime.g = s.g + c(s,s_prime)
@@ -47,12 +66,10 @@ def UpdateVertex(fringe, fringe_search, s, s_prime, goal):
         s_prime.h = heuristic(s_prime, goal)
         s_prime.parent = s
         s_prime.f = s_prime.g + s_prime.h
-        if str(s_prime.x)+"/"+str(s_prime.y) in fringe_search.keys():
-            heapq.heapreplace(fringe, (s_prime.f, s_prime))
+        if fringe.exist(str(s_prime.x)+"/"+str(s_prime.y)):
+            fringe.remove(s_prime.f, s_prime)
         else:
-            heapq.heappush(fringe, (s_prime.f, s_prime))
-        fringe_search[str(s_prime.x)+"/"+str(s_prime.y)] = 1
-    return fringe, fringe_search
+            fringe.insert(s_prime.f, s_prime)
 
 
 def heuristic(s, goal):

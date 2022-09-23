@@ -14,8 +14,7 @@ class Node:
     def __init__(self, x, y):
         self.parent = None
         self.g = math.inf
-        self.h = 0
-        self.f = self.g + self.h
+        self.h=0
         self.x = x
         self.y = y
         self.neighbor = []

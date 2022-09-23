@@ -6,14 +6,14 @@ import turtle
 import unittest
 
 
-def draw(grid, node_dict, startP, goalP, row, col, path):
+def draw(fileN, path):
 
     unit = 10  #change to change size
     kameP = turtle.Turtle()  #turtle to draw
     screen = turtle.Screen()
 
     def get_mouse_click_coor(x, y):
-        if unit>x or x>(col+1)*unit or unit>y or y>(row+1)*unit:
+        if unit>x or x>(row+1)*unit or unit>y or y>(col+1)*unit:
             return
         else:
             x//=unit
@@ -31,43 +31,51 @@ def draw(grid, node_dict, startP, goalP, row, col, path):
             kameP.end_fill()
             kameP.color("black")
 
+    #walk through a list of coornidates
     def walk():
         if path==None: return
         for i in path:
-            kameP.setposition(i[0]*unit, i[1]*unit)
+            kameP.setposition(i[0]*unit,i[1]*unit)
+
+    #read file
+    f = open(fileN, 'r')
+    startP=f.readline().split()
+    goalP=f.readline().split()
+    size=f.readline().split()
+    row = int(size[0])
+    col = int(size[1])
 
     #set up
-    screen.setup(col*unit,row*unit)
-    screen.setworldcoordinates(unit, ((row+1)*unit), (col+1)*unit, unit)  #enable our coordinate system
+    screen.setup(row*unit,col*unit)
+    screen.setworldcoordinates(unit, ((col+1)*unit), (row+1)*unit, unit)  #enable our coordinate system
     turtle.tracer(0, 0)  # to skip animation
     kameP.penup()
     kameP.setposition(unit,unit)
     kameP.pendown()
     kameP.left(90)
 
-    for i in range(col):
-        for j in range(row):
-            x = i + 1
-            y = j + 1
-            isblocked = grid[str(x)+"/"+str(y)].isblocked
-            print(isblocked)
+    #draw grids
+    for x in range(row):
+        for y in range(col):
+            isblocked = True if f.readline().split()[2]=='1' else False
             square(isblocked)
             kameP.forward(unit)
         kameP.penup()
         kameP.left(180)
-        kameP.forward(row * unit)
+        kameP.forward(col * unit)
         kameP.left(90)
-        kameP.forward(-unit)
+        kameP.forward(unit)
         kameP.left(90)
         kameP.pendown()
+    f.close()
 
     # stamps an arrow in start point, a turtle in goal
     kameP.penup()
     kameP.color("green")
-    kameP.setposition(startP[0]*unit, startP[1]*unit)
+    kameP.setposition(int(startP[0])*unit, int(startP[1])*unit)
     kameP.stamp()
     kameP.color("red")
-    kameP.setposition(goalP[0]*unit, goalP[1]*unit)
+    kameP.setposition(int(goalP[0])*unit, int(goalP[1])*unit)
     kameP.stamp()
 
     kameP.pendown()

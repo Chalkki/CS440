@@ -133,5 +133,5 @@ def astar_main(x1, y1, x2, y2, grid, node_dict, row, col):
             node_dict[str(x)+"/"+str(y)] = initialize_neighbor(x, y, grid,  node_dict[str(x)+"/"+str(y)], row, col)
     node_dict, path = astar(start, goal, node_dict)
     # return the grid for drawing the path
-    return grid, node_dict, path
+    return grid, node_dict, path[::-1]
 

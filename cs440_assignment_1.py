@@ -107,8 +107,8 @@ def main():
     col = None
     while True:
         try:
-            file = input("Please enter the file name: ")
-            start_p, goal_p, row, col,grid,node_dict = read_input(file,grid,node_dict)
+            fileN = input("Please enter the file name: ")
+            start_p, goal_p, row, col,grid,node_dict = read_input(fileN,grid,node_dict)
             x1, y1, x2, y2 = int(start_p[0]), int(start_p[1]), int(goal_p[0]), int(goal_p[1])
             break
         except FileNotFoundError as err:
@@ -126,7 +126,7 @@ def main():
         else:
             print('Invalid input. Please enter: "astar" or "theta"!')
     print(path)
-    draw(grid, node_dict, [x1, y1], [x2, y2], row, col, path)
+    draw(fileN, path)
 
 
 main()

@@ -4,13 +4,19 @@
 from tkinter import UNITS
 import turtle
 import unittest
+import Astar
 
 
-def draw(fileN, path):
+def draw(fileN, path, node_dict):
 
     unit = 10  #change to change size
     kameP = turtle.Turtle()  #turtle to draw
     screen = turtle.Screen()
+
+    def findInfo(x,y):
+        tmp = node_dict["{X}/{Y}".format(X="{:.0f}".format(x), Y="{:.0f}".format(y))]
+        return ("({X},{Y}): h={H}, g={G}, f={F}"
+                .format(X="{:.0f}".format(x), Y="{:.0f}".format(y), H=tmp.h, G=tmp.g, F=tmp.g+tmp.h))
 
     def get_mouse_click_coor(x, y):
         if unit>x or x>(row+1)*unit or unit>y or y>(col+1)*unit:
@@ -19,6 +25,17 @@ def draw(fileN, path):
             x//=unit
             y//=unit
         screen.title("Grid({X},{Y})".format(X="{:.0f}".format(x), Y="{:.0f}".format(y)))
+        print(
+            '''
+            Grid({X},{Y})
+            Upper left vertex: {s1}
+            Upper right vertex: {s2}
+            Lower left vertex: {s3}
+            Lower right vertex: {s4}
+            '''
+            .format(X="{:.0f}".format(x), Y="{:.0f}".format(y),
+                    s1=findInfo(x,y), s2=findInfo(x+1, y), s3=findInfo(x,y+1), s4=findInfo(x+1,y+1))
+            )
 
     def square(isblock):
         if isblock:
@@ -47,7 +64,8 @@ def draw(fileN, path):
     col = int(size[1])
 
     #set up
-    screen.setup(row*unit,col*unit)
+    screen.setup((row+1)*unit,(col+1)*unit)
+    print(unit, ((col+1)*unit), (row+1)*unit, unit)
     screen.setworldcoordinates(unit, ((col+1)*unit), (row+1)*unit, unit)  #enable our coordinate system
     turtle.tracer(0, 0)  # to skip animation
     kameP.penup()

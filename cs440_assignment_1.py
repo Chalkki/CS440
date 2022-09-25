@@ -96,7 +96,9 @@ def main():
         else:
             print('Invalid input. Please enter: "astar" or "theta"!')
     print(path)
+
     draw(fileN, path,node_dict)
+
 
 
 main()

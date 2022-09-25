@@ -1,5 +1,5 @@
 import math
-import Astar
+import algo_imp
 from draw_grid import draw
 
 class Cell:
@@ -9,12 +9,12 @@ class Cell:
         self.upperright = None
         self.lowerleft  = None
         self.lowerright = None
-
 class Node:
     def __init__(self, x, y):
         self.parent = None
         self.g = math.inf
-        self.h=0
+        self.h = 0
+        self.f = math.inf
         self.x = x
         self.y = y
         self.neighbor = []
@@ -86,17 +86,17 @@ def main():
             continue
     # the grid and cell is now initialized, let's decide what algorithm we want to use
     while True:
-        algo = input('Please enter the algorithm you want to use (Enter the word "astar" or "theta"): ')
-        if algo == "astar":
-            grid, node_dict, path = Astar.astar_main(x1, y1, x2, y2, grid, node_dict,row,col)
+        algo_type = input('Please enter the algorithm you want to use (Enter the word "astar" or "theta"): ')
+        if algo_type == "astar":
+            grid, node_dict, path = algo_imp.main(x1, y1, x2, y2, grid, node_dict, row, col, algo_type)
             break
-        elif algo == "theta":
-            print("we are working on theta now, stay tuned")
+        elif algo_type == "theta":
+            grid, node_dict, path = algo_imp.main(x1, y1, x2, y2, grid, node_dict, row, col, algo_type)
             break
         else:
             print('Invalid input. Please enter: "astar" or "theta"!')
     print(path)
-    draw(fileN, path)
+    draw(fileN, path,node_dict)
 
 
 main()

@@ -64,7 +64,6 @@ def draw(fileN, path, node_dict):
 
     #set up
     screen.setup((row+1)*unit,(col+1)*unit)
-    print(unit, ((col+1)*unit), (row+1)*unit, unit)
     screen.setworldcoordinates(unit, ((col+1)*unit), (row+1)*unit, unit)  #enable our coordinate system
     turtle.tracer(0, 0)  # to skip animation
     kameP.penup()

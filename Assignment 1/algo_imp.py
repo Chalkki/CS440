@@ -139,13 +139,12 @@ def UpdateVertex(s, s_prime, algo_type, grid):
     if algo_type == "theta" and LineOfSight(s.parent, s_prime, grid):
         # Path 2
         if s.parent.g + c(s.parent, s_prime) < s_prime.g:
+            if fringe.exist(str(s_prime.x) + "/" + str(s_prime.y)):
+                fringe.remove(s_prime.f, s_prime)
             s_prime.g = s.parent.g + c(s.parent, s_prime)
             s_prime.parent = s.parent
             s_prime.f = s_prime.g + s_prime.h
-            if fringe.exist(str(s_prime.x) + "/" + str(s_prime.y)):
-                fringe.remove(s_prime.f, s_prime)
-            else:
-                fringe.insert(s_prime.f, s_prime)
+            fringe.insert(s_prime.f, s_prime)
     else:
         # Path 1
         if s.g + c(s, s_prime) < s_prime.g:

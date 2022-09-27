@@ -47,6 +47,7 @@ def algo_main(start, goal, node_dict, algo_type, grid):
             while current != start:
                 path.append([current.x, current.y])
                 current = current.parent
+            path.append([start.x,start.y])
             return node_dict, path[::-1]  # Return reversed path
 
         if str(current.x) + "/" + str(current.y) not in closed.keys():

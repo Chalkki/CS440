@@ -2,6 +2,7 @@
 from math import sqrt
 import heapq
 import math
+from re import I
 
 
 class Fringe:
@@ -21,16 +22,17 @@ class Fringe:
 
     def pop(self):
         tmp = heapq.heappop(self.heap)[1]
-        self.dict.pop(str(tmp.x) + "/" + str(tmp.y), "not found in fringe")
+        del self.dict[str(tmp.x) + "/" + str(tmp.y)]
         return tmp
 
-    def replace(self, f, node):
-        heapq.heapreplace(self.heap, (f, node))
+    def remove(self, f, node):
+        self.heap.remove((f,node))
+        heapq.heapify(self.heap)
+        del self.dict[str(node.x) + "/" + str(node.y)]
 
 
 closed = {}
 fringe = Fringe()
-
 
 def algo_main(start, goal, node_dict, algo_type, grid):
     """Returns a list of lists as a path from the given start to the given end in the given grid"""
@@ -61,6 +63,7 @@ def algo_main(start, goal, node_dict, algo_type, grid):
                     neighbor.g = math.inf
                     neighbor.parent = None
                 UpdateVertex(current, neighbor, algo_type, grid)
+    print("Path not found")
     return node_dict, []
 
 
@@ -134,36 +137,24 @@ def LineOfSight(s, s_prime, grid):
 def UpdateVertex(s, s_prime, algo_type, grid):
     # if the algorithm type is theta, check line of sight. If line of sight returns False,
     # then check if path 1 is valid.
-    if algo_type == "theta":
-        if LineOfSight(s.parent, s_prime, grid):
-            # Path 2
-            if s.parent.g + c(s.parent, s_prime) < s_prime.g:
-                s_prime.g = s.parent.g + c(s.parent, s_prime)
-                s_prime.parent = s.parent
-                s_prime.f = s_prime.g + s_prime.h
-                if fringe.exist(str(s_prime.x) + "/" + str(s_prime.y)):
-                    fringe.replace(s_prime.f, s_prime)
-                else:
-                    fringe.insert(s_prime.f, s_prime)
-        else:
-            # Path 1
-            if s.g + c(s, s_prime) < s_prime.g:
-                s_prime.g = s.g + c(s, s_prime)
-                s_prime.parent = s
-                s_prime.f = s_prime.g + s_prime.h
-                if fringe.exist(str(s_prime.x) + "/" + str(s_prime.y)):
-                    fringe.replace(s_prime.f, s_prime)
-                else:
-                    fringe.insert(s_prime.f, s_prime)
+    if algo_type == "theta" and LineOfSight(s.parent, s_prime, grid):
+        # Path 2
+        if s.parent.g + c(s.parent, s_prime) < s_prime.g:
+            if fringe.exist(str(s_prime.x) + "/" + str(s_prime.y)):
+                fringe.remove(s_prime.f, s_prime)
+            s_prime.g = s.parent.g + c(s.parent, s_prime)
+            s_prime.parent = s.parent
+            s_prime.f = s_prime.g + s_prime.h
+            fringe.insert(s_prime.f, s_prime)
     else:
+        # Path 1
         if s.g + c(s, s_prime) < s_prime.g:
+            if fringe.exist(str(s_prime.x) + "/" + str(s_prime.y)):
+                fringe.remove(s_prime.f, s_prime)
             s_prime.g = s.g + c(s, s_prime)
             s_prime.parent = s
             s_prime.f = s_prime.g + s_prime.h
-            if fringe.exist(str(s_prime.x) + "/" + str(s_prime.y)):
-                fringe.replace(s_prime.f, s_prime)
-            else:
-                fringe.insert(s_prime.f, s_prime)
+            fringe.insert(s_prime.f, s_prime)
 
 def heuristic_astar(s, goal):
     return sqrt(2) * (
@@ -202,8 +193,6 @@ x 5
 7 8
 
 '''
-
-
 def initialize_neighbor(x, y, grid, node, row, col):
     if not block_check(x, y, grid, row, col):
         # self not blocked, add vertex 578

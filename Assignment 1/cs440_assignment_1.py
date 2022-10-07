@@ -1,4 +1,6 @@
 import math
+import time
+
 import algo_imp
 from draw_grid import draw
 
@@ -75,6 +77,8 @@ def main():
     path = None
     row = None
     col = None
+    start = 0
+    end = 0
     while True:
         try:
             fileN = input("Please enter the file name: ")
@@ -88,15 +92,19 @@ def main():
     while True:
         algo_type = input('Please enter the algorithm you want to use (Enter the word "astar" or "theta"): ')
         if algo_type == "astar":
+            start = time.time()
             grid, node_dict, path = algo_imp.main(x1, y1, x2, y2, grid, node_dict, row, col, algo_type)
+            end = time.time()
             break
         elif algo_type == "theta":
+            start = time.time()
             grid, node_dict, path = algo_imp.main(x1, y1, x2, y2, grid, node_dict, row, col, algo_type)
+            end = time.time()
             break
         else:
             print('Invalid input. Please enter: "astar" or "theta"!')
     print(path)
-
+    print("Time elapsed in seconds: ", end - start)
     draw(fileN, path,node_dict)
 
 

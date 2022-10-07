@@ -105,6 +105,17 @@ def main():
             print('Invalid input. Please enter: "astar" or "theta"!')
     print(path)
     print("Time elapsed in seconds: ", end - start)
+    path_length = 0
+    for i in range(len(path) - 1):
+        block_1 = path[i]
+        block_2 = path[i+1]
+        x1,y1 = block_1[0], block_1[1]
+        x2,y2 = block_2[0], block_2[1]
+        del_x = abs(x1 - x2)
+        del_y = abs(y1 - y2)
+        d = math.sqrt((del_x * del_x) +(del_y * del_y))
+        path_length = path_length + d
+    print("The total path length: ", path_length)
     draw(fileN, path,node_dict)
 
 

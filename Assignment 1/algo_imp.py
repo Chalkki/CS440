@@ -31,9 +31,6 @@ class Fringe:
         del self.dict[str(node.x) + "/" + str(node.y)]
 
 
-closed = {}
-fringe = Fringe()
-
 def algo_main(start, goal, node_dict, algo_type, grid):
     """Returns a list of lists as a path from the given start to the given end in the given grid"""
 
@@ -226,8 +223,12 @@ def block_check(x, y, grid, row, col):
         return True
     return False
 
-
+closed = {}
+fringe = Fringe()
 def main(x1, y1, x2, y2, grid, node_dict, row, col, algo_type):
+    global closed, fringe
+    closed = {}
+    fringe = Fringe()
     # Create start and goal node
     start = node_dict.get(str(x1) + "/" + str(y1))
     goal = node_dict.get(str(x2) + "/" + str(y2))

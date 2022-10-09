@@ -67,7 +67,7 @@ def read_input(file,grid,node_dict):
     return start_p, goal_p, row, col,grid,node_dict
 
 
-def main():
+if __name__ == "__main__":
     grid = {}
     node_dict = {}
     x1 = None
@@ -117,7 +117,3 @@ def main():
         path_length = path_length + d
     print("The total path length: ", path_length)
     draw(fileN, path,node_dict)
-
-
-
-main()

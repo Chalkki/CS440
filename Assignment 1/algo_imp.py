@@ -213,6 +213,19 @@ def initialize_neighbor(x, y, grid, node, row, col):
         if [x, y + 1] not in node.neighbor: node.neighbor.append([x, y + 1])
     return node
 
+def vg_neighbor(x,y,col,row,node_dict,grid):
+    s = node_dict[str(x)+"/"+str(y)]
+    # start from the next element to check the neighbors
+    for i in range(x-1,col+1):
+        for j in range(y, row+1):
+            x_prime = i+1
+            y_prime = j+1
+            s_prime = node_dict[str(x_prime)+"/"+str(y_prime)]
+            if LineOfSight(s, s_prime, grid):
+                # if the two nodes can touch each other, make them be neighbors of each other
+                node_dict[str(x) + "/" + str(y)].neighbor.append([x_prime, y_prime])
+                node_dict[str(x_prime)+"/"+str(y_prime)].neighbor.append([x, y])
+    return node_dict
 
 def block_check(x, y, grid, row, col):
     # check if grid is blocked
@@ -248,13 +261,19 @@ def main(x1, y1, x2, y2, grid, node_dict, row, col, algo_type):
         for j in range(row + 1):
             x = i + 1
             y = j + 1
-            if algo_type == "astar":
+            if algo_type == "astar" or algo_type == "vg":
                 node_dict[str(x) + "/" + str(y)].h = heuristic_astar(node_dict[str(x) + "/" + str(y)], goal)
             else:
                 node_dict[str(x) + "/" + str(y)].h = heuristic_theta(node_dict[str(x) + "/" + str(y)], goal)
-            node_dict[str(x) + "/" + str(y)] = initialize_neighbor(x, y, grid, node_dict[str(x) + "/" + str(y)], row,
+            if algo_type == "astar" or algo_type == "theta":
+                node_dict[str(x) + "/" + str(y)] = initialize_neighbor(x, y, grid, node_dict[str(x) + "/" + str(y)], row,
                                                                    col)
-
+            else:
+                node_dict = vg_neighbor(x, y, col, row, node_dict, grid)
+    if algo_type == "vg":
+        # after initializing the neighbors in visibility graph, we could change the algo_type to astar for the
+        # remaining calculation.
+        algo_type = "astar"
     node_dict, path = algo_main(start, goal, node_dict, algo_type, grid)
     # return the grid for drawing the path
     return grid, node_dict, path

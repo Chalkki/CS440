@@ -108,7 +108,7 @@ if __name__ == "__main__":
         #     end = time.time()
         #     break
         else:
-            print('Invalid input. Please enter: "astar" or "theta"!')
+            print('Invalid input. Please enter: "astar" or "theta" or "vg"!')
     print(path)
     print("Time elapsed in seconds: ", end - start)
     path_length = 0

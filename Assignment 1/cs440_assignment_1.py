@@ -99,7 +99,7 @@ if __name__ == "__main__":
                           'for visibility graph): ')
         if algo_type == "astar" or algo_type == "theta" or algo_type == "vg":
             start = time.time()
-            grid, node_dict, path = algo_imp.main(x1, y1, x2, y2, grid, node_dict, row, col, algo_type)
+            grid, node_dict, path,_ = algo_imp.main(x1, y1, x2, y2, grid, node_dict, row, col, algo_type)
             end = time.time()
             break
         # elif algo_type == "theta":

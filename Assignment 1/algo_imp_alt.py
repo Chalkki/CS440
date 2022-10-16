@@ -8,7 +8,6 @@ from re import I
 class Fringe:
     def __init__(self):
         self.heap = []
-        self.dict = {}
 
     def isEmpty(self):
         return len(self.heap) == 0
@@ -16,26 +15,27 @@ class Fringe:
     def insert(self, f, node):
         global fringeCost, fringeMax  #space track
         heapq.heappush(self.heap, (f, node))
-        self.dict[str(node.x) + "/" + str(node.y)] = 1
-        fringeCost+=2
+        fringeCost+=1
         if fringeCost>fringeMax:  #space track
             fringeMax=fringeCost
 
-    def exist(self, key):
-        return key in self.dict.keys()
+    def exist(self, x,y):
+        for i in self.heap:
+            if i[1].x==x and i[1].y==y:
+                return True
+            else:
+                return False
 
     def pop(self):
         global fringeCost, fringeMax  #space track
         tmp = heapq.heappop(self.heap)[1]
-        del self.dict[str(tmp.x) + "/" + str(tmp.y)]
-        fringeCost-=2  #space track
+        fringeCost-=1  #space track
         return tmp
 
     def remove(self, f, node):
         global fringeCost, fringeMax  #space track
         self.heap.remove((f,node))
         heapq.heapify(self.heap)
-        del self.dict[str(node.x) + "/" + str(node.y)]
         fringeCost-=2  #space track
 
 def algo_main(start, goal, node_dict, algo_type, grid):
@@ -63,7 +63,7 @@ def algo_main(start, goal, node_dict, algo_type, grid):
             # print(neighbor_pos)
             neighbor = node_dict[str(neighbor_pos[0]) + "/" + str(neighbor_pos[1])]
             if str(neighbor.x) + "/" + str(neighbor.y) not in closed.keys():
-                if not fringe.exist(str(neighbor.x) + "/" + str(neighbor.y)):
+                if not fringe.exist(str(neighbor.x), str(neighbor.y)):
                     neighbor.g = math.inf
                     neighbor.parent = None
                 UpdateVertex(current, neighbor, algo_type, grid)
@@ -144,7 +144,7 @@ def UpdateVertex(s, s_prime, algo_type, grid):
     if algo_type == "theta" and LineOfSight(s.parent, s_prime, grid):
         # Path 2
         if s.parent.g + c(s.parent, s_prime) < s_prime.g:
-            if fringe.exist(str(s_prime.x) + "/" + str(s_prime.y)):
+            if fringe.exist(str(s_prime.x),str(s_prime.y)):
                 fringe.remove(s_prime.f, s_prime)
             s_prime.g = s.parent.g + c(s.parent, s_prime)
             s_prime.parent = s.parent
@@ -153,7 +153,7 @@ def UpdateVertex(s, s_prime, algo_type, grid):
     else:
         # Path 1
         if s.g + c(s, s_prime) < s_prime.g:
-            if fringe.exist(str(s_prime.x) + "/" + str(s_prime.y)):
+            if fringe.exist(str(s_prime.x), str(s_prime.y)):
                 fringe.remove(s_prime.f, s_prime)
             s_prime.g = s.g + c(s, s_prime)
             s_prime.parent = s
@@ -248,7 +248,7 @@ fringe = Fringe()
 fringeCost=0  #space track
 fringeMax=0
 def main(x1, y1, x2, y2, grid, node_dict, row, col, algo_type):
-    global closed, fringe, fringeCost
+    global closed, fringe
     closed = {}
     fringe = Fringe()
     fringeCost=0  #space track
